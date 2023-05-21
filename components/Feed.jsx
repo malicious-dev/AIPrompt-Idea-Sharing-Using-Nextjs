@@ -1,36 +1,61 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import PromptCard from './PromptCard';
 
-import PromptCard from "./PromptCard";
-
-const PromptCardList = ({ data, handleTagClick }) => {
+const PromptCardList = ({ data, loading, handleTagClick }) => {
   return (
-    <div className='mt-16 prompt_layout'>
-      {data.map((post) => (
+    <div className="mt-16 prompt_layout">
+      {/* {data.map((post) => (
         <PromptCard
           key={post._id}
           post={post}
           handleTagClick={handleTagClick}
         />
-      ))}
+      ))} */}
+      {loading ? (
+        <div className="w-full flex-center">
+          <Image
+            src="assets/icons/loader.svg"
+            width={50}
+            height={50}
+            alt="loader"
+            className="object-contain"
+          />
+        </div>
+      ) : data.length === 0 ? (
+        <h1 className="text-3xl align-item-center mt-4 text-gray-700 font-semibold">
+          No Prompt
+        </h1>
+      ) : (
+        data.map((post) => (
+          <PromptCard
+            key={post._id}
+            post={post}
+            handleTagClick={handleTagClick}
+          />
+        ))
+      )}
     </div>
   );
 };
 
 const Feed = () => {
   const [allPosts, setAllPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Search states
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
 
   const fetchPosts = async () => {
-    const response = await fetch("/api/prompt");
+    const response = await fetch('/api/prompt');
     const data = await response.json();
 
     setAllPosts(data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -38,7 +63,7 @@ const Feed = () => {
   }, []);
 
   const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, "i"); // 'i' flag for case-insensitive search
+    const regex = new RegExp(searchtext, 'i'); // 'i' flag for case-insensitive search
     return allPosts.filter(
       (item) =>
         regex.test(item.creator.username) ||
@@ -68,15 +93,15 @@ const Feed = () => {
   };
 
   return (
-    <section className='feed'>
-      <form className='relative w-full flex-center'>
+    <section className="feed">
+      <form className="relative w-full flex-center">
         <input
-          type='text'
-          placeholder='Search for a tag or a username'
+          type="text"
+          placeholder="Search for a tag or a username"
           value={searchText}
           onChange={handleSearchChange}
           required
-          className='search_input peer'
+          className="search_input peer"
         />
       </form>
 
@@ -87,7 +112,11 @@ const Feed = () => {
           handleTagClick={handleTagClick}
         />
       ) : (
-        <PromptCardList data={allPosts} handleTagClick={handleTagClick} />
+        <PromptCardList
+          data={allPosts}
+          loading={loading}
+          handleTagClick={handleTagClick}
+        />
       )}
     </section>
   );
