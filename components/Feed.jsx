@@ -24,18 +24,22 @@ const PromptCardList = ({ data, loading, handleTagClick }) => {
             className="object-contain"
           />
         </div>
-      ) : data.length === 0 ? (
-        <h1 className="text-3xl align-item-center mt-4 text-gray-700 font-semibold">
-          No Prompt
-        </h1>
       ) : (
-        data.map((post) => (
-          <PromptCard
-            key={post._id}
-            post={post}
-            handleTagClick={handleTagClick}
-          />
-        ))
+        <>
+          {data.length === 0 ? (
+            <h1 className="text-3xl align-item-center mt-4 text-gray-700 font-semibold">
+              No Prompt
+            </h1>
+          ) : (
+            data.map((post) => (
+              <PromptCard
+                key={post._id}
+                post={post}
+                handleTagClick={handleTagClick}
+              />
+            ))
+          )}
+        </>
       )}
     </div>
   );
